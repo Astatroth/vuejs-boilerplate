@@ -1,0 +1,9 @@
+@mixin font-face($family, $path, $weight, $style) {
+    @font-face {
+        font-family: $family;
+        src: url($path + '.eot');
+        src: url($path + '.eot') format('embedded-opentype'), url($path + '.ttf') format('truetype');
+        font-weight: $weight;
+        font-style: $style;
+    }
+}

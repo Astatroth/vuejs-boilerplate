@@ -1,0 +1,8 @@
+/.idea
+/node_modules
+/resources/js/config.js
+/public_html/css/app.css
+/public_html/js/scripts.js
+/public_html/js/app.js
+/public_html/js/chunks
+/public_html/.htaccess

@@ -64,8 +64,6 @@ localization.keys().map((key) => {
     extendObject = extend(true, extendObject, obj);
 });
 
-console.log(extendObject);
-
 const lang = document.documentElement.lang.substr(0, 2);
 
 export const i18n = new VueInternationalization({

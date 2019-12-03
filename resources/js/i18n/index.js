@@ -47,12 +47,12 @@ VueInternationalization.prototype.getChoiceIndex = (choice, choicesLength) => {
 Vue.use(VueInternationalization);
 
 // let extendObject = Locale;
-let modules = require.context('./../store/modules/', true, /\.locale.js/i);
+// let modules = require.context('./../store/modules/', true, /\.locale.js/i);
 let extendObject;
 
-modules.keys().map((key) => {
+/*modules.keys().map((key) => {
     extendObject = extend(true, extendObject, modules(key).default);
-});
+});*/
 
 let localization = require.context('./../../lang/', true, /\.js/i);
 localization.keys().map((key) => {
@@ -64,9 +64,43 @@ localization.keys().map((key) => {
     extendObject = extend(true, extendObject, obj);
 });
 
-const lang = document.documentElement.lang.substr(0, 2);
+const lang = document.documentElement.lang;
 
 export const i18n = new VueInternationalization({
     locale: lang,
     messages: extendObject
 });
+
+const loadedLanguages = [];
+
+function setI18nLanguage(lang) {
+    i18n.locale = lang;
+    axios.defaults.headers.common['Accept-Language'] = lang;
+    document.querySelector('html').setAttribute('lang', lang);
+
+    return lang;
+}
+
+export function loadLanguageAsync(module) {
+    if (loadedLanguages.includes(module)) {
+        return;
+    }
+
+    return import(/* webpackChunkName: "lang-[request]" */ `../store/modules/${module}/lang.js`).then((messages) => {
+        let _messages = i18n.messages;
+        let extendObject = {};
+
+        Object.keys(_messages).map((key) => {
+            let obj = {};
+            let locale = messages.default[key];
+
+            obj[key] = _messages[key];
+            extendObject = extend(true, obj[key], locale);
+
+            i18n.setLocaleMessage(key, extendObject);
+        });
+
+        console.log(i18n.messages);
+        loadedLanguages.push(module);
+    });
+}

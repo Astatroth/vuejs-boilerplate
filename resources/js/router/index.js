@@ -1,7 +1,7 @@
 import VueRouter from 'vue-router';
 import Vue from 'vue';
 import store from 'ROOT/store';
-// import {i18n} from 'ROOT/I18n';
+import {loadLanguageAsync} from 'ROOT/i18n';
 
 Vue.use(VueRouter);
 
@@ -36,6 +36,9 @@ routes.push({
     path: '/',
     component: () => import(/* webpackChunkName: 'home' */ 'ROOT/store/modules/Home/index'),
     children: children,
+    meta: {
+        module: 'Home'
+    }
 });
 
 routes.push({
@@ -97,6 +100,16 @@ router.beforeEach((to, from, next) => {
 /**
  * Manage page title
  */
+
+router.beforeEach((to, from, next) => {
+    const module = to.meta.module || null;
+
+    if (!module) {
+        return next();
+    }
+
+    loadLanguageAsync(module).then(() => next());
+});
 
 router.afterEach((to, from) => {
     //
